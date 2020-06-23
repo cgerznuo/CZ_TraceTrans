@@ -2,6 +2,7 @@
 #  	Created = 2018. 3. 19.
 #  	author = Cgerzuno
 import pymel.all as pm
+import math as math
 
 def GetObj():
 	Select = 'None'
@@ -33,6 +34,13 @@ def Make_TraceGrp( Source = None ):
 		pm.delete( Shape )
 	return [ A_Grp , B_Grp , C_Grp , Dup ]
 
+def Cmd_GetDistance(PA=None , PB=None):
+	XDis = (PB[0] - PA[0]) * (PB[0] - PA[0])
+	YDis = (PB[1] - PA[1]) * (PB[1] - PA[1])
+	ZDis = (PB[2] - PA[2]) * (PB[2] - PA[2])
+	Distance = math.sqrt(XDis + YDis + ZDis)
+	return Distance
+
 def Spread( Source = None ):
 	List = pm.selected()
 	Return = Make_TraceGrp( Source = Source )
@@ -42,6 +50,11 @@ def Spread( Source = None ):
 	B_Grp = Return[1]
 	C_Grp = Return[2]
 	DupGrp = Return[3]
+	TA = pm.xform( A_Grp, q=1, t=1, ws=1 )
+	TB = pm.xform( B_Grp, q=1, t=1, ws=1 )
+
+	OrigScale = Cmd_GetDistance(PA=TA, PB=TB )
+
 	if List :
 		for Target in List :
 			print Target
@@ -56,6 +69,10 @@ def Spread( Source = None ):
 			Trans = pm.xform( DupGrp , q = 1, t = 1, ws = 1 )
 			Rot = pm.xform( DupGrp , q = 1, ro = 1, ws = 1 )
 			pm.xform( Loc , t = Trans , ro = Rot, ws = 1 )
+			TargScale = Cmd_GetDistance(PA=TransA, PB=TransB )
+			NS = TargScale / OrigScale
+			Loc.s.set(NS,NS,NS)
+
 	pm.delete( Return[0] )
 	pm.delete( Return[1] )
 	pm.delete( Return[2] )
