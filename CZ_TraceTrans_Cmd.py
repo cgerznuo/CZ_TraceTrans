@@ -64,14 +64,16 @@ def Spread( Source = None ):
 			A_Grp.t.set( TransA )
 			B_Grp.t.set( TransB )
 			C_Grp.t.set( TransC )
+			TargScale = Cmd_GetDistance(PA=TransA, PB=TransB )
+			NS = TargScale / OrigScale
+			A_Grp.s.set(NS,NS,NS)
+
 			Loc = pm.spaceLocator()
 			Loc.setParent( SpreadGrp )
 			Trans = pm.xform( DupGrp , q = 1, t = 1, ws = 1 )
 			Rot = pm.xform( DupGrp , q = 1, ro = 1, ws = 1 )
-			pm.xform( Loc , t = Trans , ro = Rot, ws = 1 )
-			TargScale = Cmd_GetDistance(PA=TransA, PB=TransB )
-			NS = TargScale / OrigScale
-			Loc.s.set(NS,NS,NS)
+			Scale = pm.xform( DupGrp , q = 1, s = 1, ws = 1 )
+			pm.xform( Loc , t = Trans , ro = Rot, s=Scale,ws = 1 )
 
 	pm.delete( Return[0] )
 	pm.delete( Return[1] )
